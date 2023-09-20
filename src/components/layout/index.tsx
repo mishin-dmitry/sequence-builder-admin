@@ -11,7 +11,9 @@ export interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({children}) => (
   <AntdLayout>
     <AntdLayout.Header />
-    <main className={styles.main}>{children}</main>
+    <main className={styles.main}>
+      <div className={styles.mainInner}>{children}</div>
+    </main>
     <AntdLayout.Footer />
   </AntdLayout>
 )

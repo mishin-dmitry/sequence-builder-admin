@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+}
+
+.formWrapper {
+  width: 47%;
+}
+
+.previewWrapper {
+  width: 47%;
+}
