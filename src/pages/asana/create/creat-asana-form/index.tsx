@@ -6,29 +6,40 @@ import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
 import {InboxOutlined} from '@ant-design/icons'
 
-import type {UploadFile} from 'antd'
 import {Row} from 'components/row'
 
-interface CreateAsanaFormFields {
+export interface CreateAsanaFormFields {
   name: string
   description: string
-  image: UploadFile
+  image: File
 }
 
 interface CreateAsanaFormProps {
-  onSubmit?: (data: CreateAsanaFormFields) => Promise<void>
+  onSubmit: (data: CreateAsanaFormFields) => Promise<void>
+  onFormChange: (data: CreateAsanaFormFields) => void
 }
 
-export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = (
-  {
-    // onSubmit: onSubmitProp
-  }
-) => {
-  const {handleSubmit, control} = useForm<CreateAsanaFormFields>({})
+export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
+  onSubmit: onSubmitProp,
+  onFormChange
+}) => {
+  const {handleSubmit, control, reset, watch} = useForm<CreateAsanaFormFields>(
+    {}
+  )
 
   const onSubmit: SubmitHandler<CreateAsanaFormFields> = (data) => {
-    console.log(data)
+    onSubmitProp(data)
+
+    reset()
   }
+
+  React.useEffect(() => {
+    const subscription = watch((value) =>
+      onFormChange(value as CreateAsanaFormFields)
+    )
+
+    return () => subscription.unsubscribe()
+  }, [watch])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -92,13 +103,13 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = (
               maxCount={1}
               onRemove={() => field.onChange(undefined)}
               onChange={({file}) => {
-                const {status} = file
+                const {status, originFileObj, name} = file
 
                 if (status === 'done') {
-                  message.success(`${file.name} file uploaded successfully.`)
-                  field.onChange(file)
+                  message.success(`${name} file uploaded successfully.`)
+                  field.onChange(originFileObj)
                 } else if (status === 'error') {
-                  message.error(`${file.name} file upload failed.`)
+                  message.error(`${name} file upload failed.`)
                 }
               }}>
               <p className="ant-upload-drag-icon">

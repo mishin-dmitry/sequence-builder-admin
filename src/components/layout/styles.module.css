@@ -8,9 +8,6 @@
 
 .mainInner {
   margin: 0 auto;
-  background-color: #fff;
   max-width: 1280px;
   padding: 20px;
-  border-radius: 8px;
-  border: 1px solid rgba(5 5 5 / 0.06);
 }
