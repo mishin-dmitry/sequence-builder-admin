@@ -1,5 +1,5 @@
 export interface Asana {
-  pk: number
+  pk?: number
   name: string
   description: string
   image: string

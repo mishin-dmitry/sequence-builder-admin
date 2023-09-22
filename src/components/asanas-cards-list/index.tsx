@@ -2,6 +2,7 @@ import React, {useMemo} from 'react'
 
 import type {Asana} from 'types'
 import {AsanaCard} from 'components/asana-card'
+import {Urls} from 'lib/urls'
 
 import styles from './styles.module.css'
 
@@ -16,7 +17,12 @@ export const AsanaCardsList: React.FC<AsanaCardsListProps> = ({
     () => (
       <ul className={styles.list}>
         {asanas.map((data: Asana) => (
-          <AsanaCard data={data} key={data.pk} />
+          <AsanaCard
+            data={data}
+            key={data.pk}
+            isLink
+            href={`${Urls.EDIT}/${data.pk}`}
+          />
         ))}
       </ul>
     ),

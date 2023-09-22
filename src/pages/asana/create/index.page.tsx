@@ -1,10 +1,10 @@
 import React, {useCallback, useState} from 'react'
 
-import {CreateAsanaForm, CreateAsanaFormFields} from './creat-asana-form'
+import {CreateAsanaForm, CreateAsanaFormFields} from './create-asana-form'
 import {CreateAsanaRequest, createAsana} from 'api/actions'
 
-import styles from './styles.module.css'
 import {AsanaCard} from 'components/asana-card'
+import {FormWrapper} from 'components/form-wrapper'
 
 const CreateAsanaPage: React.FC = () => {
   const [formData, setFormData] = useState<Partial<CreateAsanaFormFields>>({})
@@ -28,14 +28,9 @@ const CreateAsanaPage: React.FC = () => {
   )
 
   return (
-    <div className={styles.root}>
-      <div className={styles.formWrapper}>
-        <CreateAsanaForm onSubmit={onSubmit} onFormChange={onFormChange} />
-      </div>
-      <div className={styles.previewWrapper}>
-        <AsanaCard data={formData as any} isPreview />
-      </div>
-    </div>
+    <FormWrapper preview={<AsanaCard data={formData} />}>
+      <CreateAsanaForm onSubmit={onSubmit} onFormChange={onFormChange} />
+    </FormWrapper>
   )
 }
 

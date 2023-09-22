@@ -19,3 +19,10 @@ export const getAsanasList = request.bind<null, string, [], Promise<Asana[]>>(
   HttpMethod.GET,
   'api/asana/'
 )
+
+export const updateAsana = request.bind<
+  null,
+  string,
+  [CreateAsanaRequest],
+  Promise<void>
+>(null, HttpMethod.PUTCH, 'api/asana/')

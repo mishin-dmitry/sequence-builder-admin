@@ -1,11 +1,14 @@
 import React from 'react'
-import {useAsana} from '../hooks'
+
 import {AsanaCardsList} from 'components/asanas-cards-list'
+import {useAsana} from 'context/asanas'
 
 const AsanaListPage: React.FC = () => {
   const {isFetching, asanas} = useAsana()
 
-  if (isFetching) return <div>Loading...</div>
+  if (isFetching) {
+    return null
+  }
 
   return (
     <div>

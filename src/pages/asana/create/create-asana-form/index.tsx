@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import {Upload, message, Button} from 'antd'
 import {Input} from 'components/input'
@@ -17,15 +17,17 @@ export interface CreateAsanaFormFields {
 interface CreateAsanaFormProps {
   onSubmit: (data: CreateAsanaFormFields) => Promise<void>
   onFormChange: (data: CreateAsanaFormFields) => void
+  defaultValues?: Partial<CreateAsanaFormFields>
 }
 
 export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   onSubmit: onSubmitProp,
-  onFormChange
+  onFormChange,
+  defaultValues = {}
 }) => {
-  const {handleSubmit, control, reset, watch} = useForm<CreateAsanaFormFields>(
-    {}
-  )
+  const {handleSubmit, control, reset, watch} = useForm<CreateAsanaFormFields>({
+    defaultValues
+  })
 
   const onSubmit: SubmitHandler<CreateAsanaFormFields> = (data) => {
     onSubmitProp(data)
@@ -33,7 +35,7 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset()
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const subscription = watch((value) =>
       onFormChange(value as CreateAsanaFormFields)
     )
@@ -41,11 +43,16 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     return () => subscription.unsubscribe()
   }, [watch])
 
+  useEffect(() => {
+    reset(defaultValues)
+  }, [defaultValues])
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="name"
         control={control}
+        defaultValue="foo"
         rules={{
           required: {
             value: true,
