@@ -2,12 +2,13 @@ import React from 'react'
 
 import {AsanaCardsList} from 'components/asanas-cards-list'
 import {useAsana} from 'context/asanas'
+import {Spinner} from 'components/spinner'
 
 const AsanaListPage: React.FC = () => {
   const {isFetching, asanas} = useAsana()
 
   if (isFetching) {
-    return null
+    return <Spinner />
   }
 
   return (

@@ -1,15 +1,19 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
 
 import {useRouter} from 'next/router'
+
 import {
   CreateAsanaForm,
   CreateAsanaFormFields
 } from '../create/create-asana-form'
-import {CreateAsanaRequest, updateAsana} from 'api/actions'
+
 import {FormWrapper} from 'components/form-wrapper'
 import {AsanaCard} from 'components/asana-card'
 import {Asana} from 'types'
 import {useAsana} from 'context/asanas'
+import {Modal} from 'antd'
+import {useAsanaActions} from '../hooks'
+import {Spinner} from 'components/spinner'
 
 const EditAsanaPage: React.FC = () => {
   const [asana, setAsana] = useState<Asana>()
@@ -18,6 +22,7 @@ const EditAsanaPage: React.FC = () => {
   const router = useRouter()
 
   const {getAsanaById, isFetching} = useAsana()
+  const {updateAsana, deleteAsana} = useAsanaActions()
 
   useEffect(() => {
     if (router.query.id && !isFetching) {
@@ -25,20 +30,9 @@ const EditAsanaPage: React.FC = () => {
 
       setAsana(currentAsana)
     }
-  }, [router.isReady, isFetching])
+  }, [router.isReady, isFetching, router.query.id, getAsanaById])
 
-  const onSubmit = useCallback(
-    async ({name, description, image}: CreateAsanaRequest) => {
-      const formData = new FormData()
-
-      formData.append('name', name)
-      formData.append('description', description)
-      formData.append('image', image)
-
-      await updateAsana(formData as any)
-    },
-    [router]
-  )
+  const onSubmit = useCallback(updateAsana, [updateAsana])
 
   const onFormChange = useCallback(
     (data: CreateAsanaFormFields) => setFormData(data),
@@ -64,8 +58,20 @@ const EditAsanaPage: React.FC = () => {
     }
   }, [asana, formData])
 
+  const showDeleteConfirm = useCallback(() => {
+    Modal.confirm({
+      title: 'Вы действительно хотите удалить асану?',
+      okText: 'Да',
+      okType: 'danger',
+      cancelText: 'Нет',
+      onOk() {
+        deleteAsana()
+      }
+    })
+  }, [deleteAsana])
+
   if (isFetching) {
-    return null
+    return <Spinner />
   }
 
   return (
@@ -74,6 +80,7 @@ const EditAsanaPage: React.FC = () => {
         onSubmit={onSubmit}
         onFormChange={onFormChange}
         defaultValues={defaultValues}
+        onDelete={showDeleteConfirm}
       />
     </FormWrapper>
   )

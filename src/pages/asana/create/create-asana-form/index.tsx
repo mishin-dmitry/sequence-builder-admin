@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react'
+import React, {useCallback, useEffect} from 'react'
 
 import {Upload, message, Button} from 'antd'
 import {Input} from 'components/input'
 import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
 import {InboxOutlined} from '@ant-design/icons'
-
 import {Row} from 'components/row'
+
+import styles from './styles.module.css'
 
 export interface CreateAsanaFormFields {
   name: string
@@ -18,14 +19,24 @@ interface CreateAsanaFormProps {
   onSubmit: (data: CreateAsanaFormFields) => Promise<void>
   onFormChange: (data: CreateAsanaFormFields) => void
   defaultValues?: Partial<CreateAsanaFormFields>
+  isImageRequired?: boolean
+  onDelete?: () => void
 }
 
 export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   onSubmit: onSubmitProp,
   onFormChange,
-  defaultValues = {}
+  defaultValues,
+  isImageRequired,
+  onDelete
 }) => {
-  const {handleSubmit, control, reset, watch} = useForm<CreateAsanaFormFields>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: {isDirty, isSubmitting, isValid}
+  } = useForm<CreateAsanaFormFields>({
     defaultValues
   })
 
@@ -35,24 +46,25 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset()
   }
 
+  const onDeleteButtonClick = useCallback(() => onDelete?.(), [onDelete])
+
   useEffect(() => {
-    const subscription = watch((value) =>
+    const subscription = watch((value) => {
       onFormChange(value as CreateAsanaFormFields)
-    )
+    })
 
     return () => subscription.unsubscribe()
-  }, [watch])
+  }, [onFormChange, watch])
 
   useEffect(() => {
     reset(defaultValues)
-  }, [defaultValues])
+  }, [defaultValues, reset])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="name"
         control={control}
-        defaultValue="foo"
         rules={{
           required: {
             value: true,
@@ -101,7 +113,13 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       <Controller
         name="image"
         control={control}
-        rules={{required: true}}
+        rules={
+          isImageRequired
+            ? {
+                required: {value: true, message: 'Загрузите изображение'}
+              }
+            : {}
+        }
         render={({field}) => (
           <Row>
             <Upload.Dragger
@@ -134,9 +152,25 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
         )}
       />
 
-      <Button type="primary" htmlType="submit" size="large">
-        Сохранить
-      </Button>
+      <div className={styles.buttonsWrapper}>
+        {typeof onDelete === 'function' && (
+          <Button
+            type="primary"
+            danger
+            size="large"
+            disabled={isSubmitting}
+            onClick={onDeleteButtonClick}>
+            Удалить
+          </Button>
+        )}
+        <Button
+          type="primary"
+          htmlType="submit"
+          size="large"
+          disabled={!isDirty || !isValid || isSubmitting}>
+          Сохранить
+        </Button>
+      </div>
     </form>
   )
 }

@@ -12,17 +12,22 @@ export const createAsana = request.bind<
   string,
   [CreateAsanaRequest],
   Promise<void>
->(null, HttpMethod.POST, 'api/asana/')
+>(null, HttpMethod.POST, process.env.API_PREFIX)
 
 export const getAsanasList = request.bind<null, string, [], Promise<Asana[]>>(
   null,
   HttpMethod.GET,
-  'api/asana/'
+  process.env.API_PREFIX
 )
 
 export const updateAsana = request.bind<
   null,
   string,
-  [CreateAsanaRequest],
+  [string, CreateAsanaRequest],
   Promise<void>
->(null, HttpMethod.PUTCH, 'api/asana/')
+>(null, HttpMethod.PUT)
+
+export const deleteAsana = request.bind<null, string, [string], Promise<void>>(
+  null,
+  HttpMethod.DELETE
+)

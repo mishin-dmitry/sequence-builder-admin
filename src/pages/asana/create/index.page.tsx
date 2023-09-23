@@ -1,35 +1,39 @@
-import React, {useCallback, useState} from 'react'
+import React, {useCallback, useMemo, useState} from 'react'
 
 import {CreateAsanaForm, CreateAsanaFormFields} from './create-asana-form'
-import {CreateAsanaRequest, createAsana} from 'api/actions'
 
 import {AsanaCard} from 'components/asana-card'
 import {FormWrapper} from 'components/form-wrapper'
+import {useAsanaActions} from '../hooks'
+import {useAsana} from 'context/asanas'
+import {Spinner} from 'components/spinner'
 
 const CreateAsanaPage: React.FC = () => {
   const [formData, setFormData] = useState<Partial<CreateAsanaFormFields>>({})
 
-  const onSubmit = useCallback(
-    async ({name, description, image}: CreateAsanaRequest) => {
-      const formData = new FormData()
+  const {createAsana} = useAsanaActions()
+  const {isFetching} = useAsana()
 
-      formData.append('name', name)
-      formData.append('description', description)
-      formData.append('image', image)
-
-      await createAsana(formData as any)
-    },
-    []
-  )
+  const onSubmit = useCallback(createAsana, [createAsana])
 
   const onFormChange = useCallback(
     (data: CreateAsanaFormFields) => setFormData(data),
     []
   )
 
+  const preview = useMemo(() => <AsanaCard data={formData} />, [formData])
+
+  if (isFetching) {
+    return <Spinner />
+  }
+
   return (
-    <FormWrapper preview={<AsanaCard data={formData} />}>
-      <CreateAsanaForm onSubmit={onSubmit} onFormChange={onFormChange} />
+    <FormWrapper preview={preview}>
+      <CreateAsanaForm
+        onSubmit={onSubmit}
+        onFormChange={onFormChange}
+        isImageRequired
+      />
     </FormWrapper>
   )
 }

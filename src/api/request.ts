@@ -2,7 +2,7 @@ export enum HttpMethod {
   GET = 'get',
   POST = 'post',
   PUT = 'put',
-  PUTCH = 'putch',
+  PATCH = 'patch',
   DELETE = 'delete'
 }
 
@@ -12,12 +12,12 @@ export const request = async <T = void>(
   params: Record<string, any>
 ): Promise<T> => {
   try {
-    const response = await fetch(`${process.env.API_ORIGIN}${endpoint}`, {
+    const response = await fetch(`${process.env.API_ORIGIN}${endpoint}/`, {
       method: httpMethod,
       body: params,
       // body: JSON.stringify(params),
       headers: {
-        // 'Content-Type': 'multipart/form-data'
+        // 'Content-Type': 'multipart/form-data'gd
         // 'Content-Length': '473',
         // 'Access-Control-Allow-Origin': '*'
         // 'Content-Type': 'application/json'

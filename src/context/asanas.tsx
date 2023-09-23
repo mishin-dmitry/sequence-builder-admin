@@ -13,6 +13,7 @@ export interface AsanasProviderData {
   asanas: Asana[]
   isFetching: boolean
   getAsanaById: (id: number) => Asana | undefined
+  fetchAsanaList?: () => Promise<void>
 }
 
 const initialContext: AsanasProviderData = {
@@ -29,22 +30,23 @@ export const ProvideAsanas: React.FC<{children: React.ReactNode}> = ({
   const [asanas, setAsanas] = useState<Asana[]>([])
   const [isFetching, setIsFetching] = useState(false)
 
-  useEffect(() => {
-    const fetchAsanasList = async (): Promise<void> => {
-      try {
-        setIsFetching(true)
+  const fetchAsanaList = useCallback(async () => {
+    try {
+      setIsFetching(true)
 
-        const response = await getAsanasList()
+      const response = await getAsanasList()
 
-        setAsanas(response)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setIsFetching(false)
-      }
+      setAsanas(response)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsFetching(false)
     }
+  }, [])
 
-    fetchAsanasList()
+  useEffect(() => {
+    fetchAsanaList()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getAsanaById = useCallback(
@@ -56,9 +58,10 @@ export const ProvideAsanas: React.FC<{children: React.ReactNode}> = ({
     () => ({
       isFetching,
       asanas,
-      getAsanaById
+      getAsanaById,
+      fetchAsanaList
     }),
-    [isFetching, asanas, getAsanaById]
+    [isFetching, asanas, getAsanaById, fetchAsanaList]
   )
 
   return (

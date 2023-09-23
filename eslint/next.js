@@ -4,11 +4,11 @@
  *
  * https://www.npmjs.com/package/@rushstack/eslint-patch
  */
-require("@rushstack/eslint-patch/modern-module-resolution");
+require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
-  extends: ["next"],
+  extends: ['next'],
   rules: {
-    "@next/next/no-img-element": 0,
-  },
-};
+    '@next/next/no-img-element': 0
+  }
+}
