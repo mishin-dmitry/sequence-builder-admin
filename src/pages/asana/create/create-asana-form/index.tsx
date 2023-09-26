@@ -61,7 +61,7 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   }, [defaultValues, reset])
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
       <Controller
         name="name"
         control={control}
