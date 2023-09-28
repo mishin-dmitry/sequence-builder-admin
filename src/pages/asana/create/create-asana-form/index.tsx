@@ -89,12 +89,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       <Controller
         name="description"
         control={control}
-        rules={{
-          required: {
-            value: true,
-            message: 'Введите описание асаны'
-          }
-        }}
         render={({field, fieldState}) => (
           <Row>
             <Textarea
@@ -123,7 +117,7 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
         render={({field}) => (
           <Row>
             <Upload.Dragger
-              name="file"
+              name="pictogram"
               multiple={false}
               maxCount={1}
               onRemove={() => field.onChange(undefined)}
