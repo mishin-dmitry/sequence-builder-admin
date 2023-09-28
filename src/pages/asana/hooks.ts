@@ -38,9 +38,9 @@ export const useAsanaActions = (): UseAsanaActions => {
       try {
         const formData = new FormData()
 
-        formData.append('name', name)
-        formData.append('description', description)
-        formData.append('image', image)
+        name && formData.append('name', name)
+        description && formData.append('description', description)
+        image && formData.append('image', image)
 
         await createAsanaAction(formData as any)
 
@@ -66,9 +66,9 @@ export const useAsanaActions = (): UseAsanaActions => {
       try {
         const formData = new FormData()
 
-        formData.append('name', name)
-        formData.append('description', description)
-        formData.append('image', image)
+        name && formData.append('name', name)
+        description && formData.append('description', description)
+        image && formData.append('image', image)
 
         await updateAsanaAction(
           `${process.env.API_PREFIX}/${router.query.id}`,
