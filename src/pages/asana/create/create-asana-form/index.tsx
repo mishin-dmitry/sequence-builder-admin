@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect} from 'react'
 
-import {Upload, message, Button} from 'antd'
+import {Button} from 'antd'
 import {Input} from 'components/input'
 import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
-import {InboxOutlined} from '@ant-design/icons'
 import {Row} from 'components/row'
 
 import styles from './styles.module.css'
@@ -12,7 +11,7 @@ import styles from './styles.module.css'
 export interface CreateAsanaFormFields {
   name: string
   description: string
-  image: File
+  alias: string
 }
 
 interface CreateAsanaFormProps {
@@ -27,7 +26,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   onSubmit: onSubmitProp,
   onFormChange,
   defaultValues,
-  isImageRequired,
   onDelete
 }) => {
   const {
@@ -87,6 +85,30 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       />
 
       <Controller
+        name="alias"
+        control={control}
+        rules={{
+          required: {
+            value: true,
+            message: 'Введите алиас асаны'
+          }
+        }}
+        render={({field, fieldState}) => (
+          <Row>
+            <Input
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Введите алиас асаны"
+              size="large"
+              status={fieldState.error && 'error'}
+              label="Алиас асаны"
+              name={field.name}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
         name="description"
         control={control}
         render={({field, fieldState}) => (
@@ -100,48 +122,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               status={fieldState.error && 'error'}
               label="Описание асаны"
             />
-          </Row>
-        )}
-      />
-
-      <Controller
-        name="image"
-        control={control}
-        rules={
-          isImageRequired
-            ? {
-                required: {value: true, message: 'Загрузите изображение'}
-              }
-            : {}
-        }
-        render={({field}) => (
-          <Row>
-            <Upload.Dragger
-              name="pictogram"
-              multiple={false}
-              maxCount={1}
-              onRemove={() => field.onChange(undefined)}
-              onChange={({file}) => {
-                const {status, originFileObj, name} = file
-
-                if (status === 'done') {
-                  message.success(`${name} file uploaded successfully.`)
-                  field.onChange(originFileObj)
-                } else if (status === 'error') {
-                  message.error(`${name} file upload failed.`)
-                }
-              }}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Кликните или перенесите изображение в область для загрузки
-              </p>
-              <p className="ant-upload-hint">
-                Загрузите изображение асаны, которое будет отображаться в
-                карточке
-              </p>
-            </Upload.Dragger>
           </Row>
         )}
       />

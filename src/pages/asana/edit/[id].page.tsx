@@ -40,23 +40,18 @@ const EditAsanaPage: React.FC = () => {
   )
 
   const defaultValues = useMemo(
-    () => ({name: asana?.name, description: asana?.description}),
+    () => ({
+      name: asana?.name,
+      description: asana?.description,
+      alias: asana?.alias
+    }),
     [asana]
   )
 
-  const asanaCardData = useMemo(() => {
-    if (formData === null) {
-      return asana
-    } else {
-      const currentFormData = formData
-
-      if (!currentFormData.image) {
-        currentFormData.image = asana?.image
-      }
-
-      return currentFormData
-    }
-  }, [asana, formData])
+  const asanaCardData = useMemo(
+    () => (formData === null ? asana : formData),
+    [asana, formData]
+  )
 
   const showDeleteConfirm = useCallback(() => {
     Modal.confirm({

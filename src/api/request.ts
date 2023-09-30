@@ -14,12 +14,9 @@ export const request = async <T = void>(
   try {
     const response = await fetch(`${process.env.API_ORIGIN}${endpoint}/`, {
       method: httpMethod,
-      body: params as any,
+      body: JSON.stringify(params),
       headers: {
-        // 'Content-Type': 'multipart/form-data'gd
-        // 'Content-Length': '473',
-        // 'Access-Control-Allow-Origin': '*'
-        // 'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       }
     })
 

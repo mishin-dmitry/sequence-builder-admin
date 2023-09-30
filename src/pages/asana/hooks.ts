@@ -34,15 +34,9 @@ export const useAsanaActions = (): UseAsanaActions => {
   }, [fetchAsanaList, router])
 
   const createAsana = useCallback(
-    async ({name, description, image}: CreateAsanaRequest) => {
+    async (formData: CreateAsanaRequest) => {
       try {
-        const formData = new FormData()
-
-        name && formData.append('name', name)
-        description && formData.append('description', description)
-        image && formData.append('image', image)
-
-        await createAsanaAction(formData as any)
+        await createAsanaAction(formData)
 
         notification['success']({
           message: 'Асана успешно создана'
@@ -62,17 +56,11 @@ export const useAsanaActions = (): UseAsanaActions => {
   )
 
   const updateAsana = useCallback(
-    async ({name, description, image}: CreateAsanaRequest) => {
+    async (formData: CreateAsanaRequest) => {
       try {
-        const formData = new FormData()
-
-        name && formData.append('name', name)
-        description && formData.append('description', description)
-        image && formData.append('image', image)
-
         await updateAsanaAction(
           `${process.env.API_PREFIX}/${router.query.id}`,
-          formData as any
+          formData
         )
 
         notification['success']({

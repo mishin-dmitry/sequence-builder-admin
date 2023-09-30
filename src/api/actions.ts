@@ -2,9 +2,9 @@ import type {Asana} from 'types'
 import {HttpMethod, request} from './request'
 
 export interface CreateAsanaRequest {
-  name: string
-  description: string
-  image: File
+  name?: string
+  description?: string
+  alias?: string
 }
 
 export const createAsana = request.bind<
