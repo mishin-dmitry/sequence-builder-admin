@@ -39,11 +39,12 @@ const EditAsanaPage: React.FC = () => {
     []
   )
 
-  const defaultValues = useMemo(
+  const defaultValues = useMemo<CreateAsanaFormFields>(
     () => ({
-      name: asana?.name,
-      description: asana?.description,
-      alias: asana?.alias
+      name: asana?.name ?? '',
+      description: asana?.description ?? '',
+      alias: asana?.alias ?? '',
+      searchKeys: asana?.searchKeys ?? ''
     }),
     [asana]
   )

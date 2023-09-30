@@ -3,4 +3,5 @@ export interface Asana {
   name: string
   description: string
   alias: string
+  searchKeys: string
 }

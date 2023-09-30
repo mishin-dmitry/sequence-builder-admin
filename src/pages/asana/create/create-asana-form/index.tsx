@@ -12,6 +12,7 @@ export interface CreateAsanaFormFields {
   name: string
   description: string
   alias: string
+  searchKeys: string
 }
 
 interface CreateAsanaFormProps {
@@ -102,6 +103,24 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               size="large"
               status={fieldState.error && 'error'}
               label="Алиас асаны"
+              name={field.name}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="searchKeys"
+        control={control}
+        render={({field, fieldState}) => (
+          <Row>
+            <Input
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Введите ключи для поиска асаны"
+              size="large"
+              status={fieldState.error && 'error'}
+              label="Ключи для поиска асан"
               name={field.name}
             />
           </Row>
