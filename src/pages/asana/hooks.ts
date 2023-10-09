@@ -4,11 +4,10 @@ import {
   CreateAsanaRequest,
   createAsana as createAsanaAction,
   updateAsana as updateAsanaAction,
-  deleteAsana as deleteAsanaAction
-} from 'api/actions'
+  deleteAsana as deleteAsanaAction,
+  API_PREFIX
+} from 'api/asana-actions'
 
-import {useAsana} from 'context/asanas'
-import {Urls} from 'lib/urls'
 import {useRouter} from 'next/router'
 import {useCallback, useMemo} from 'react'
 
@@ -18,56 +17,34 @@ interface UseAsanaActions {
   deleteAsana: () => Promise<void>
 }
 
-const REDIRECT_TIMEOUT = 2000
-
 export const useAsanaActions = (): UseAsanaActions => {
   const router = useRouter()
 
-  const {fetchAsanaList} = useAsana()
+  const createAsana = useCallback(async (formData: CreateAsanaRequest) => {
+    try {
+      await createAsanaAction(formData)
 
-  const returnToAsanasList = useCallback(async () => {
-    await new Promise((resolve) => window.setTimeout(resolve, REDIRECT_TIMEOUT))
+      notification['success']({
+        message: 'Асана успешно создана'
+      })
+    } catch (error) {
+      console.error(error)
 
-    await fetchAsanaList?.()
-
-    router.push(Urls.ASANA_LIST)
-  }, [fetchAsanaList, router])
-
-  const createAsana = useCallback(
-    async (formData: CreateAsanaRequest) => {
-      try {
-        await createAsanaAction(formData)
-
-        notification['success']({
-          message: 'Асана успешно создана'
-        })
-
-        await returnToAsanasList()
-      } catch (error) {
-        console.error(error)
-
-        notification['error']({
-          message: 'Ошибка',
-          description: 'При создании асаны возникла ошибка'
-        })
-      }
-    },
-    [returnToAsanasList]
-  )
+      notification['error']({
+        message: 'Ошибка',
+        description: 'При создании асаны возникла ошибка'
+      })
+    }
+  }, [])
 
   const updateAsana = useCallback(
     async (formData: CreateAsanaRequest) => {
       try {
-        await updateAsanaAction(
-          `${process.env.API_PREFIX}/${router.query.id}`,
-          formData
-        )
+        await updateAsanaAction(`${API_PREFIX}/${router.query.id}`, formData)
 
         notification['success']({
           message: 'Асана успешно отредактирована'
         })
-
-        await returnToAsanasList()
       } catch {
         notification['error']({
           message: 'Ошибка',
@@ -75,25 +52,23 @@ export const useAsanaActions = (): UseAsanaActions => {
         })
       }
     },
-    [returnToAsanasList, router.query.id]
+    [router.query.id]
   )
 
   const deleteAsana = useCallback(async () => {
     try {
-      await deleteAsanaAction(`${process.env.API_PREFIX}/${router.query.id}`)
+      await deleteAsanaAction(`${API_PREFIX}/${router.query.id}`)
 
       notification['success']({
         message: 'Асана успешно удалена'
       })
-
-      returnToAsanasList()
     } catch {
       notification['error']({
         message: 'Ошибка',
         description: 'При удалении асаны возникла ошибка'
       })
     }
-  }, [returnToAsanasList, router.query.id])
+  }, [router.query.id])
 
   return useMemo(
     () => ({

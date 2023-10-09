@@ -4,4 +4,8 @@ export interface Asana {
   description: string
   alias: string
   searchKeys: string
+  groups: {
+    id: number
+    name: string
+  }[]
 }

@@ -7,17 +7,19 @@ export interface CreateAsanaRequest {
   alias?: string
 }
 
+export const API_PREFIX = 'api/asanas'
+
 export const createAsana = request.bind<
   null,
   string,
   [CreateAsanaRequest],
   Promise<void>
->(null, HttpMethod.POST, `${process.env.API_PREFIX}/create`)
+>(null, HttpMethod.POST, `${API_PREFIX}/create`)
 
 export const getAsanasList = request.bind<null, string, [], Promise<Asana[]>>(
   null,
   HttpMethod.GET,
-  `${process.env.API_PREFIX}/getAll`
+  `${API_PREFIX}/getAll`
 )
 
 export const updateAsana = request.bind<

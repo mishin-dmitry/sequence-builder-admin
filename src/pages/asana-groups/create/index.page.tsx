@@ -1,23 +1,28 @@
 import React, {useCallback, useMemo, useState} from 'react'
 
-import {CreateAsanaForm, CreateAsanaFormFields} from './create-asana-form'
+import {
+  CreateAsanaGroupForm,
+  CreateAsanaGroupFormFields
+} from './create-asana-form'
 
 import {AsanaCard} from 'components/asana-card'
 import {FormWrapper} from 'components/form-wrapper'
-import {useAsanaActions} from '../hooks'
+import {useAsanaGroupActions} from '../hooks'
 import {useData} from 'context/asanas'
 import {Spinner} from 'components/spinner'
 
-const CreateAsanaPage: React.FC = () => {
-  const [formData, setFormData] = useState<Partial<CreateAsanaFormFields>>({})
+const CreateAsanaGroupPage: React.FC = () => {
+  const [formData, setFormData] = useState<CreateAsanaGroupFormFields>({
+    name: ''
+  })
 
-  const {createAsana} = useAsanaActions()
+  const {createAsanaGroup} = useAsanaGroupActions()
   const {isFetching} = useData()
 
-  const onSubmit = useCallback(createAsana, [createAsana])
+  const onSubmit = useCallback(createAsanaGroup, [createAsanaGroup])
 
   const onFormChange = useCallback(
-    (data: CreateAsanaFormFields) => setFormData(data),
+    (data: CreateAsanaGroupFormFields) => setFormData(data),
     []
   )
 
@@ -29,7 +34,7 @@ const CreateAsanaPage: React.FC = () => {
 
   return (
     <FormWrapper preview={preview}>
-      <CreateAsanaForm
+      <CreateAsanaGroupForm
         onSubmit={onSubmit}
         onFormChange={onFormChange}
         isImageRequired
@@ -38,4 +43,4 @@ const CreateAsanaPage: React.FC = () => {
   )
 }
 
-export default CreateAsanaPage
+export default CreateAsanaGroupPage

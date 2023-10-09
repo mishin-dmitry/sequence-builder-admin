@@ -3,52 +3,48 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useRouter} from 'next/router'
 
 import {
-  CreateAsanaForm,
-  CreateAsanaFormFields
+  CreateAsanaGroupForm,
+  CreateAsanaGroupFormFields
 } from '../create/create-asana-form'
 
 import {FormWrapper} from 'components/form-wrapper'
 import {AsanaCard} from 'components/asana-card'
-import type {Asana} from 'types'
+import type {AsanaGroup} from 'types'
 import {useData} from 'context/asanas'
 import {Modal} from 'antd'
-import {useAsanaActions} from '../hooks'
+import {useAsanaGroupActions} from '../hooks'
 import {Spinner} from 'components/spinner'
 
-const EditAsanaPage: React.FC = () => {
-  const [asana, setAsana] = useState<Asana>()
+const EditAsanaGroupPage: React.FC = () => {
+  const [asana, setAsana] = useState<AsanaGroup>()
   const [formData, setFormData] = useState<any>(null)
 
   const router = useRouter()
 
   const {getInstanceById, isFetching} = useData()
-  const {updateAsana, deleteAsana} = useAsanaActions()
+  const {updateAsanaGroup, deleteAsanaGroup} = useAsanaGroupActions()
 
   useEffect(() => {
     if (router.query.id && !isFetching) {
-      const currentAsana = getInstanceById('asanas', +router.query.id) as Asana
+      const currentAsana = getInstanceById(
+        'groups',
+        +router.query.id
+      ) as AsanaGroup
 
       setAsana(currentAsana)
     }
   }, [router.isReady, isFetching, router.query.id, getInstanceById])
 
-  const onSubmit = useCallback(updateAsana, [updateAsana])
+  const onSubmit = useCallback(updateAsanaGroup, [updateAsanaGroup])
 
   const onFormChange = useCallback(
-    (data: CreateAsanaFormFields) => setFormData(data),
+    (data: CreateAsanaGroupFormFields) => setFormData(data),
     []
   )
 
-  const defaultValues = useMemo<CreateAsanaFormFields>(
+  const defaultValues = useMemo<CreateAsanaGroupFormFields>(
     () => ({
-      name: asana?.name ?? '',
-      description: asana?.description ?? '',
-      alias: asana?.alias ?? '',
-      searchKeys: asana?.searchKeys ?? '',
-      groups: (asana?.groups ?? []).map(({id, name}) => ({
-        value: id,
-        label: name
-      }))
+      name: asana?.name ?? ''
     }),
     [asana]
   )
@@ -60,15 +56,15 @@ const EditAsanaPage: React.FC = () => {
 
   const showDeleteConfirm = useCallback(() => {
     Modal.confirm({
-      title: 'Вы действительно хотите удалить асану?',
+      title: 'Вы действительно хотите удалить группу асан?',
       okText: 'Да',
       okType: 'danger',
       cancelText: 'Нет',
       onOk() {
-        deleteAsana()
+        deleteAsanaGroup()
       }
     })
-  }, [deleteAsana])
+  }, [deleteAsanaGroup])
 
   if (isFetching) {
     return <Spinner />
@@ -76,7 +72,7 @@ const EditAsanaPage: React.FC = () => {
 
   return (
     <FormWrapper preview={<AsanaCard data={asanaCardData} />}>
-      <CreateAsanaForm
+      <CreateAsanaGroupForm
         onSubmit={onSubmit}
         onFormChange={onFormChange}
         defaultValues={defaultValues}
@@ -86,4 +82,4 @@ const EditAsanaPage: React.FC = () => {
   )
 }
 
-export default EditAsanaPage
+export default EditAsanaGroupPage

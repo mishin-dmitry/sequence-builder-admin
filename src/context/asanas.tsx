@@ -1,4 +1,3 @@
-import {getAsanasList} from 'api/actions'
 import React, {
   createContext,
   useCallback,
@@ -7,36 +6,47 @@ import React, {
   useMemo,
   useState
 } from 'react'
-import {Asana} from 'types'
 
-export interface AsanasProviderData {
+import {getAsanasList} from 'api/asana-actions'
+import type {Asana, AsanaGroup} from 'types'
+import {getAsanaGroupsList} from 'api/group-actions'
+
+export interface Data {
   asanas: Asana[]
+  asanaGroups: AsanaGroup[]
   isFetching: boolean
-  getAsanaById: (id: number) => Asana | undefined
-  fetchAsanaList?: () => Promise<void>
+  getInstanceById: (
+    key: 'asanas' | 'groups',
+    id: number
+  ) => Asana | AsanaGroup | undefined
+  fetchData?: () => Promise<void>
 }
 
-const initialContext: AsanasProviderData = {
+const initialContext: Data = {
   asanas: [],
+  asanaGroups: [],
   isFetching: false,
-  getAsanaById: () => undefined
+  getInstanceById: () => undefined
 }
 
-const AsanasContext = createContext<AsanasProviderData>(initialContext)
+const DataContext = createContext<Data>(initialContext)
 
-export const ProvideAsanas: React.FC<{children: React.ReactNode}> = ({
+export const ProvideData: React.FC<{children: React.ReactNode}> = ({
   children
 }) => {
   const [asanas, setAsanas] = useState<Asana[]>([])
+  const [asanaGroups, setAsanaGroups] = useState<AsanaGroup[]>([])
   const [isFetching, setIsFetching] = useState(false)
 
-  const fetchAsanaList = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       setIsFetching(true)
 
-      const response = await getAsanasList()
+      const asanas = await getAsanasList()
+      const asanaGroups = await getAsanaGroupsList()
 
-      setAsanas(response)
+      setAsanas(asanas)
+      setAsanaGroups(asanaGroups)
     } catch (error) {
       console.error(error)
     } finally {
@@ -45,30 +55,32 @@ export const ProvideAsanas: React.FC<{children: React.ReactNode}> = ({
   }, [])
 
   useEffect(() => {
-    fetchAsanaList()
+    fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getAsanaById = useCallback(
-    (id: number) => (asanas ?? []).find((asana) => asana.id === id),
-    [asanas]
+  const getInstanceById = useCallback(
+    (key: 'asanas' | 'groups', id: number) =>
+      (key === 'asanas' ? asanas : asanaGroups).find(
+        (instance) => instance.id === id
+      ),
+    [asanaGroups, asanas]
   )
 
   const asanasData = useMemo(
     () => ({
       isFetching,
       asanas,
-      getAsanaById,
-      fetchAsanaList
+      getInstanceById,
+      fetchData,
+      asanaGroups
     }),
-    [isFetching, asanas, getAsanaById, fetchAsanaList]
+    [isFetching, asanas, getInstanceById, fetchData, asanaGroups]
   )
 
   return (
-    <AsanasContext.Provider value={asanasData}>
-      {children}
-    </AsanasContext.Provider>
+    <DataContext.Provider value={asanasData}>{children}</DataContext.Provider>
   )
 }
 
-export const useAsana = (): AsanasProviderData => useContext(AsanasContext)
+export const useData = (): Data => useContext(DataContext)

@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect} from 'react'
+import React, {useCallback, useEffect, useMemo} from 'react'
 
-import {Button} from 'antd'
+import {Button, Select} from 'antd'
 import {Input} from 'components/input'
 import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
 import {Row} from 'components/row'
+import {useData} from 'context/asanas'
 
 import styles from './styles.module.css'
 
@@ -13,6 +14,10 @@ export interface CreateAsanaFormFields {
   description: string
   alias: string
   searchKeys: string
+  groups?: {
+    value: number
+    label: string
+  }[]
 }
 
 interface CreateAsanaFormProps {
@@ -44,6 +49,13 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
 
     reset()
   }
+
+  const {asanaGroups} = useData()
+
+  const options = useMemo(
+    () => asanaGroups.map(({id, name}) => ({value: id, label: name})),
+    [asanaGroups]
+  )
 
   const onDeleteButtonClick = useCallback(() => onDelete?.(), [onDelete])
 
@@ -104,6 +116,30 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               status={fieldState.error && 'error'}
               label="Алиас асаны"
               name={field.name}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="groups"
+        control={control}
+        rules={{
+          required: {
+            value: true,
+            message: 'Введите алиас асаны'
+          }
+        }}
+        render={({field}) => (
+          <Row>
+            <Select
+              mode="tags"
+              size="large"
+              value={field.value}
+              options={options}
+              onChange={field.onChange}
+              placeholder="Выберите группы асаны"
+              style={{width: '100%'}}
             />
           </Row>
         )}
