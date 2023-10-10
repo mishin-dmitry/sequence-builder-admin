@@ -124,12 +124,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       <Controller
         name="groups"
         control={control}
-        rules={{
-          required: {
-            value: true,
-            message: 'Введите алиас асаны'
-          }
-        }}
         render={({field}) => (
           <Row>
             <Select
