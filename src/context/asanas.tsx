@@ -7,8 +7,9 @@ import React, {
   useState
 } from 'react'
 
-import {getAsanasList} from 'api/asana-actions'
 import type {Asana, AsanaGroup} from 'types'
+
+import {getAsanasList} from 'api/asana-actions'
 import {getAsanaGroupsList} from 'api/group-actions'
 
 export interface Data {
@@ -19,7 +20,8 @@ export interface Data {
     key: 'asanas' | 'groups',
     id: number
   ) => Asana | AsanaGroup | undefined
-  fetchData?: () => Promise<void>
+  fetchAsanas?: () => Promise<void>
+  fetchAsanaGroups?: () => Promise<void>
 }
 
 const initialContext: Data = {
@@ -54,6 +56,34 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
     }
   }, [])
 
+  const fetchAsanas = useCallback(async () => {
+    try {
+      setIsFetching(true)
+
+      const asanas = await getAsanasList()
+
+      setAsanas(asanas)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsFetching(false)
+    }
+  }, [])
+
+  const fetchAsanaGroups = useCallback(async () => {
+    try {
+      setIsFetching(true)
+
+      const asanaGroups = await getAsanaGroupsList()
+
+      setAsanaGroups(asanaGroups)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsFetching(false)
+    }
+  }, [])
+
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,10 +102,18 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
       isFetching,
       asanas,
       getInstanceById,
-      fetchData,
-      asanaGroups
+      asanaGroups,
+      fetchAsanas,
+      fetchAsanaGroups
     }),
-    [isFetching, asanas, getInstanceById, fetchData, asanaGroups]
+    [
+      isFetching,
+      asanas,
+      getInstanceById,
+      asanaGroups,
+      fetchAsanas,
+      fetchAsanaGroups
+    ]
   )
 
   return (

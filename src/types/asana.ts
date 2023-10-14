@@ -1,11 +1,10 @@
+import type {AsanaGroup} from './asana-group'
+
 export interface Asana {
-  id?: number
+  id: number
   name: string
   description: string
   alias: string
   searchKeys: string
-  groups: {
-    id: number
-    name: string
-  }[]
+  groups: AsanaGroup[]
 }

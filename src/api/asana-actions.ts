@@ -5,6 +5,7 @@ export interface CreateAsanaRequest {
   name?: string
   description?: string
   alias?: string
+  groups?: number[]
 }
 
 export const API_PREFIX = 'api/asanas'

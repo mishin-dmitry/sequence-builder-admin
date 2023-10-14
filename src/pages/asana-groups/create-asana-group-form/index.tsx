@@ -13,15 +13,12 @@ export interface CreateAsanaGroupFormFields {
 
 interface CreateAsanaGroupFormProps {
   onSubmit: (data: CreateAsanaGroupFormFields) => Promise<void>
-  onFormChange: (data: CreateAsanaGroupFormFields) => void
   defaultValues?: Partial<CreateAsanaGroupFormFields>
-  isImageRequired?: boolean
   onDelete?: () => void
 }
 
 export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
   onSubmit: onSubmitProp,
-  onFormChange,
   defaultValues,
   onDelete
 }) => {
@@ -29,7 +26,6 @@ export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
     handleSubmit,
     control,
     reset,
-    watch,
     formState: {isDirty, isSubmitting, isValid}
   } = useForm<CreateAsanaGroupFormFields>({
     defaultValues
@@ -42,14 +38,6 @@ export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
   }
 
   const onDeleteButtonClick = useCallback(() => onDelete?.(), [onDelete])
-
-  useEffect(() => {
-    const subscription = watch((value) => {
-      onFormChange(value as CreateAsanaGroupFormFields)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [onFormChange, watch])
 
   useEffect(() => {
     reset(defaultValues)

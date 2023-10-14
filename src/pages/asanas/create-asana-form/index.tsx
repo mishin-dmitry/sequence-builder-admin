@@ -14,23 +14,17 @@ export interface CreateAsanaFormFields {
   description: string
   alias: string
   searchKeys: string
-  groups?: {
-    value: number
-    label: string
-  }[]
+  groups?: number[]
 }
 
 interface CreateAsanaFormProps {
   onSubmit: (data: CreateAsanaFormFields) => Promise<void>
-  onFormChange: (data: CreateAsanaFormFields) => void
   defaultValues?: Partial<CreateAsanaFormFields>
-  isImageRequired?: boolean
   onDelete?: () => void
 }
 
 export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   onSubmit: onSubmitProp,
-  onFormChange,
   defaultValues,
   onDelete
 }) => {
@@ -38,7 +32,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     handleSubmit,
     control,
     reset,
-    watch,
     formState: {isDirty, isSubmitting, isValid}
   } = useForm<CreateAsanaFormFields>({
     defaultValues
@@ -60,19 +53,11 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
   const onDeleteButtonClick = useCallback(() => onDelete?.(), [onDelete])
 
   useEffect(() => {
-    const subscription = watch((value) => {
-      onFormChange(value as CreateAsanaFormFields)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [onFormChange, watch])
-
-  useEffect(() => {
     reset(defaultValues)
   }, [defaultValues, reset])
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="name"
         control={control}

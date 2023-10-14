@@ -7,18 +7,18 @@ import {
   deleteAsanaGroup as deleteAsanaGroupAction,
   API_PREFIX
 } from 'api/group-actions'
+import {useData} from 'context/asanas'
 
-import {useRouter} from 'next/router'
 import {useCallback, useMemo} from 'react'
 
 interface UseAsanaGroupActions {
   createAsanaGroup: (data: CreateAsanaGroupRequest) => Promise<void>
-  updateAsanaGroup: (data: CreateAsanaGroupRequest) => Promise<void>
-  deleteAsanaGroup: () => Promise<void>
+  updateAsanaGroup: (data: CreateAsanaGroupRequest, id: number) => Promise<void>
+  deleteAsanaGroup: (id: number) => Promise<void>
 }
 
 export const useAsanaGroupActions = (): UseAsanaGroupActions => {
-  const router = useRouter()
+  const {fetchAsanaGroups} = useData()
 
   const createAsanaGroup = useCallback(
     async (formData: CreateAsanaGroupRequest) => {
@@ -28,6 +28,8 @@ export const useAsanaGroupActions = (): UseAsanaGroupActions => {
         notification['success']({
           message: 'Группа успешно создана'
         })
+
+        await fetchAsanaGroups?.()
       } catch (error) {
         console.error(error)
 
@@ -37,20 +39,19 @@ export const useAsanaGroupActions = (): UseAsanaGroupActions => {
         })
       }
     },
-    []
+    [fetchAsanaGroups]
   )
 
   const updateAsanaGroup = useCallback(
-    async (formData: CreateAsanaGroupRequest) => {
+    async (formData: CreateAsanaGroupRequest, id: number) => {
       try {
-        await updateAsanaGroupAction(
-          `${API_PREFIX}/${router.query.id}`,
-          formData
-        )
+        await updateAsanaGroupAction(`${API_PREFIX}/${id}`, formData)
 
         notification['success']({
           message: 'Группа успешно отредактирована'
         })
+
+        await fetchAsanaGroups?.()
       } catch {
         notification['error']({
           message: 'Ошибка',
@@ -58,23 +59,28 @@ export const useAsanaGroupActions = (): UseAsanaGroupActions => {
         })
       }
     },
-    [router.query.id]
+    [fetchAsanaGroups]
   )
 
-  const deleteAsanaGroup = useCallback(async () => {
-    try {
-      await deleteAsanaGroupAction(`${API_PREFIX}/${router.query.id}`)
+  const deleteAsanaGroup = useCallback(
+    async (id: number) => {
+      try {
+        await deleteAsanaGroupAction(`${API_PREFIX}/${id}`)
 
-      notification['success']({
-        message: 'Группа успешно удалена'
-      })
-    } catch {
-      notification['error']({
-        message: 'Ошибка',
-        description: 'При удалении группы возникла ошибка'
-      })
-    }
-  }, [router.query.id])
+        notification['success']({
+          message: 'Группа успешно удалена'
+        })
+
+        await fetchAsanaGroups?.()
+      } catch {
+        notification['error']({
+          message: 'Ошибка',
+          description: 'При удалении группы возникла ошибка'
+        })
+      }
+    },
+    [fetchAsanaGroups]
+  )
 
   return useMemo(
     () => ({
