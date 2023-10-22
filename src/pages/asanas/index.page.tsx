@@ -36,8 +36,16 @@ const AsanasListPage: React.FC = () => {
   )
 
   const onRowClick = useCallback(
-    ({id}: {id: number}) => ({onClick: () => setCurrentAsanaId(id)}),
-    []
+    ({id}: {id: number}) => ({
+      onClick: () => {
+        setCurrentAsanaId(id)
+
+        if (shouldShowEmptyForm) {
+          setShouldShowEmptyForm(false)
+        }
+      }
+    }),
+    [shouldShowEmptyForm]
   )
 
   const onEditFormSubmit = useCallback(
@@ -77,7 +85,11 @@ const AsanasListPage: React.FC = () => {
     })
   }, [currentAsanaId, deleteAsana])
 
-  const onButtonClick = useCallback(() => setShouldShowEmptyForm(true), [])
+  const onButtonClick = useCallback(() => {
+    setCurrentAsana(null)
+    setCurrentAsanaId(-1)
+    setShouldShowEmptyForm(true)
+  }, [])
 
   if (isFetching) {
     return <Spinner />

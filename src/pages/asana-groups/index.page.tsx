@@ -40,8 +40,16 @@ const AsanaListPage: React.FC = () => {
   )
 
   const onRowClick = useCallback(
-    ({id}: {id: number}) => ({onClick: () => setCurrenGroupId(id)}),
-    []
+    ({id}: {id: number}) => ({
+      onClick: () => {
+        setCurrenGroupId(id)
+
+        if (shouldShowEmptyForm) {
+          setShouldShowEmptyForm(false)
+        }
+      }
+    }),
+    [shouldShowEmptyForm]
   )
 
   const onEditFormSubmit = useCallback(
@@ -79,7 +87,11 @@ const AsanaListPage: React.FC = () => {
     })
   }, [currentGroupId, deleteAsanaGroup])
 
-  const onButtonClick = useCallback(() => setShouldShowEmptyForm(true), [])
+  const onButtonClick = useCallback(() => {
+    setCurrenGroupId(-1)
+    setCurrentGroup(null)
+    setShouldShowEmptyForm(true)
+  }, [])
 
   if (isFetching) {
     return <Spinner />
