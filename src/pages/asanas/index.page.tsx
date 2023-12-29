@@ -68,7 +68,8 @@ const AsanasListPage: React.FC = () => {
       description: currentAsana?.description ?? '',
       alias: currentAsana?.alias ?? '',
       searchKeys: currentAsana?.searchKeys ?? '',
-      groups: (currentAsana?.groups ?? []).map(({id}) => id)
+      groups: (currentAsana?.groups ?? []).map(({id}) => id),
+      alignment: currentAsana?.alignment ?? ''
     }),
     [currentAsana]
   )

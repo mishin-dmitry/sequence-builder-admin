@@ -4,6 +4,7 @@ export interface Asana {
   id: number
   name: string
   description: string
+  alignment: string
   alias: string
   searchKeys: string
   groups: AsanaGroup[]

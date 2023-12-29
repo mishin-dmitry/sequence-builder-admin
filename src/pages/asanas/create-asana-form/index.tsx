@@ -12,6 +12,7 @@ import styles from './styles.module.css'
 export interface CreateAsanaFormFields {
   name: string
   description: string
+  alignment: string
   alias: string
   searchKeys: string
   groups?: number[]
@@ -155,6 +156,24 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               size="large"
               status={fieldState.error && 'error'}
               label="Описание асаны"
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="alignment"
+        control={control}
+        render={({field, fieldState}) => (
+          <Row>
+            <Textarea
+              value={field.value}
+              onChange={field.onChange}
+              name={field.name}
+              placeholder="Введите отстройку асаны"
+              size="large"
+              status={fieldState.error && 'error'}
+              label="Отстройка асаны"
             />
           </Row>
         )}
