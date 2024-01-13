@@ -16,6 +16,7 @@ export interface CreateAsanaFormFields {
   alias: string
   searchKeys: string
   groups?: number[]
+  pirs?: number[]
 }
 
 interface CreateAsanaFormProps {
@@ -44,11 +45,16 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset()
   }
 
-  const {asanaGroups} = useData()
+  const {asanaGroups, asanas} = useData()
 
-  const options = useMemo(
+  const asanaGroupOptions = useMemo(
     () => asanaGroups.map(({id, name}) => ({value: id, label: name})),
     [asanaGroups]
+  )
+
+  const asanaPirOptions = useMemo(
+    () => asanas.map(({id, name}) => ({value: id, label: name})),
+    [asanas]
   )
 
   const onDeleteButtonClick = useCallback(() => onDelete?.(), [onDelete])
@@ -116,7 +122,7 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               mode="tags"
               size="large"
               value={field.value}
-              options={options}
+              options={asanaGroupOptions}
               onChange={field.onChange}
               placeholder="Выберите группы асаны"
               style={{width: '100%'}}
@@ -177,6 +183,27 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
             />
           </Row>
         )}
+      />
+
+      <Controller
+        name="pirs"
+        control={control}
+        render={({field, fieldState}) => {
+          return (
+            <Row>
+              <Select
+                mode="tags"
+                style={{width: '100%'}}
+                size="large"
+                placeholder="Выберите ПИРы для асаны"
+                status={fieldState.error && 'error'}
+                value={field.value}
+                options={asanaPirOptions}
+                onChange={field.onChange}
+              />
+            </Row>
+          )
+        }}
       />
 
       <div className={styles.buttonsWrapper}>

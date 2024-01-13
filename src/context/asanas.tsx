@@ -16,6 +16,7 @@ export interface Data {
   asanas: Asana[]
   asanaGroups: AsanaGroup[]
   isFetching: boolean
+  asanasMap: Record<number, Asana>
   getInstanceById: (
     key: 'asanas' | 'groups',
     id: number
@@ -27,6 +28,7 @@ export interface Data {
 const initialContext: Data = {
   asanas: [],
   asanaGroups: [],
+  asanasMap: {},
   isFetching: false,
   getInstanceById: () => undefined
 }
@@ -39,6 +41,16 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
   const [asanas, setAsanas] = useState<Asana[]>([])
   const [asanaGroups, setAsanaGroups] = useState<AsanaGroup[]>([])
   const [isFetching, setIsFetching] = useState(false)
+
+  const asanasMap = useMemo(() => {
+    const result = {} as Record<string, Asana>
+
+    asanas.forEach((asana) => {
+      result[asana.id] = asana
+    })
+
+    return result
+  }, [asanas])
 
   const fetchData = useCallback(async () => {
     try {
@@ -104,7 +116,8 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
       getInstanceById,
       asanaGroups,
       fetchAsanas,
-      fetchAsanaGroups
+      fetchAsanaGroups,
+      asanasMap
     }),
     [
       isFetching,
@@ -112,7 +125,8 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
       getInstanceById,
       asanaGroups,
       fetchAsanas,
-      fetchAsanaGroups
+      fetchAsanaGroups,
+      asanasMap
     ]
   )
 

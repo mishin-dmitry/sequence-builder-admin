@@ -8,4 +8,5 @@ export interface Asana {
   alias: string
   searchKeys: string
   groups: AsanaGroup[]
+  pirs: number[]
 }
