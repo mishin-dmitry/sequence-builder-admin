@@ -63,6 +63,11 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset(defaultValues)
   }, [defaultValues, reset])
 
+  const filterOption = (
+    input: string,
+    option?: {label: string; value: string}
+  ): any => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
@@ -192,7 +197,8 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
           return (
             <Row>
               <Select
-                mode="tags"
+                mode="multiple"
+                optionFilterProp="label"
                 style={{width: '100%'}}
                 size="large"
                 placeholder="Выберите ПИРы для асаны"
