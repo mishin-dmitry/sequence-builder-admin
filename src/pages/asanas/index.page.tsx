@@ -31,7 +31,14 @@ const AsanasListPage: React.FC = () => {
 
   const dataSource = useMemo(
     () =>
-      asanas.map(({id, name, alias}, index) => ({id, name, alias, key: index})),
+      asanas.map(({id, name, alias}, index) => ({
+        id,
+        name,
+        alias,
+        key: index,
+        filterSearch: true,
+        defaultSortOrder: 'ascend'
+      })),
     [asanas]
   )
 
@@ -104,6 +111,7 @@ const AsanasListPage: React.FC = () => {
       ) : (
         <div className={styles.tableWrapper}>
           <Table
+            pagination={{pageSize: 100}}
             dataSource={dataSource}
             columns={[
               {
