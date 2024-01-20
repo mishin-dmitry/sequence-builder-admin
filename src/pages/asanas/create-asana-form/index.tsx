@@ -63,11 +63,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset(defaultValues)
   }, [defaultValues, reset])
 
-  const filterOption = (
-    input: string,
-    option?: {label: string; value: string}
-  ): any => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller

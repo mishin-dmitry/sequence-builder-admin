@@ -69,6 +69,8 @@ const AsanasListPage: React.FC = () => {
     [createAsana]
   )
 
+  console.log('currentAsana', currentAsana)
+
   const defaultValues = useMemo<CreateAsanaFormFields>(
     () => ({
       name: currentAsana?.name ?? '',
@@ -77,7 +79,7 @@ const AsanasListPage: React.FC = () => {
       searchKeys: currentAsana?.searchKeys ?? '',
       groups: (currentAsana?.groups ?? []).map(({id}) => id),
       alignment: currentAsana?.alignment ?? '',
-      pirs: currentAsana?.pirs ?? []
+      pirs: (currentAsana?.pirs ?? []).map(({pirId}) => pirId)
     }),
     [currentAsana]
   )

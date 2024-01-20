@@ -1,4 +1,5 @@
 import type {AsanaGroup} from './asana-group'
+import type {Pir} from './pir'
 
 export interface Asana {
   id: number
@@ -8,5 +9,5 @@ export interface Asana {
   alias: string
   searchKeys: string
   groups: AsanaGroup[]
-  pirs: number[]
+  pirs: Pir[]
 }
