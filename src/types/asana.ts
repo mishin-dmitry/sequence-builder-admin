@@ -1,5 +1,15 @@
 import type {AsanaGroup} from './asana-group'
-import type {Pir} from './pir'
+
+export enum GroupForGenerating {
+  SAGITTAL = 'sagittal',
+  FRONTAL = 'frontal',
+  STOMACH_LYING = 'stomachLying',
+  BACK_LYING = 'backLying',
+  SITTING = 'sitting',
+  HAND_BALANCES = 'handBalances',
+  SHOULDERS = 'shoulders',
+  INVERTED = 'inverted'
+}
 
 export interface Asana {
   id: number
@@ -8,6 +18,11 @@ export interface Asana {
   alignment: string
   alias: string
   searchKeys: string
+  canBeGenerated: boolean
+  canBeStartOfSequence: boolean
+  isAsymmetrical: boolean
+  groupForGenerating: GroupForGenerating
   groups: AsanaGroup[]
-  pirs: Pir[]
+  pirs: number[]
+  continuingAsanas: number[]
 }

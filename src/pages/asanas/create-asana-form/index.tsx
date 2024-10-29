@@ -1,11 +1,14 @@
 import React, {useCallback, useEffect, useMemo} from 'react'
 
-import {Button, Select} from 'antd'
+import {Button, Select, Checkbox, TreeSelect} from 'antd'
 import {Input} from 'components/input'
 import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
 import {Row} from 'components/row'
 import {useData} from 'context/asanas'
+import {GroupForGenerating} from 'types/asana'
+import {groupsForGenerator} from './group-for-generator'
+import {iconsMap} from 'icons'
 
 import styles from './styles.module.css'
 
@@ -15,8 +18,13 @@ export interface CreateAsanaFormFields {
   alignment: string
   alias: string
   searchKeys: string
-  groups?: number[]
-  pirs?: number[]
+  canBeGenerated: boolean
+  canBeStartOfSequence: boolean
+  isAsymmetrical: boolean
+  groupForGenerating?: GroupForGenerating
+  groups: number[]
+  pirs: number[]
+  continuingAsanas: number[]
 }
 
 interface CreateAsanaFormProps {
@@ -45,15 +53,27 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset()
   }
 
-  const {asanaGroups, asanas} = useData()
+  const {asanaGroupCategories, asanas} = useData()
 
-  const asanaGroupOptions = useMemo(
-    () => asanaGroups.map(({id, name}) => ({value: id, label: name})),
-    [asanaGroups]
-  )
-
-  const asanaPirOptions = useMemo(
-    () => asanas.map(({id, name}) => ({value: id, label: name})),
+  const asanaOptions = useMemo(
+    () =>
+      asanas.map(({id, name, alias}) => ({
+        value: id,
+        label: (
+          <div className={styles.row}>
+            <img
+              width={40}
+              height={40}
+              loading="lazy"
+              src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                iconsMap[alias]
+              )}`}
+              alt="Изображение асаны"
+            />{' '}
+            {name}
+          </div>
+        )
+      })),
     [asanas]
   )
 
@@ -63,8 +83,22 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
     reset(defaultValues)
   }, [defaultValues, reset])
 
+  const treeData = useMemo(
+    () =>
+      asanaGroupCategories.map(({name, groups}) => ({
+        value: name,
+        title: name,
+        treeCheckable: false,
+        children: groups.map(({id, name}) => ({
+          value: id,
+          label: name
+        }))
+      })),
+    [asanaGroupCategories]
+  )
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <Controller
         name="name"
         control={control}
@@ -118,14 +152,16 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
         control={control}
         render={({field}) => (
           <Row>
-            <Select
-              mode="tags"
-              size="large"
-              value={field.value}
-              options={asanaGroupOptions}
+            <TreeSelect
+              multiple
+              treeDefaultExpandAll
               onChange={field.onChange}
               placeholder="Выберите группы асаны"
               style={{width: '100%'}}
+              value={field.value}
+              size="large"
+              allowClear
+              treeData={treeData}
             />
           </Row>
         )}
@@ -152,7 +188,7 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       <Controller
         name="description"
         control={control}
-        render={({field, fieldState}) => (
+        render={({field}) => (
           <Row>
             <Textarea
               value={field.value}
@@ -160,7 +196,6 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               name={field.name}
               placeholder="Введите описание асаны"
               size="large"
-              status={fieldState.error && 'error'}
               label="Описание асаны"
             />
           </Row>
@@ -186,25 +221,105 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
       />
 
       <Controller
+        name="canBeGenerated"
+        control={control}
+        render={({field}) => (
+          <Row>
+            <Checkbox
+              checked={field.value}
+              onChange={field.onChange}
+              name={field.name}>
+              Включить асану в генератор последовательностей
+            </Checkbox>
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="canBeStartOfSequence"
+        control={control}
+        render={({field}) => (
+          <Row>
+            <Checkbox
+              checked={field.value}
+              onChange={field.onChange}
+              name={field.name}>
+              Может быть началом последовательности
+            </Checkbox>
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="isAsymmetrical"
+        control={control}
+        render={({field}) => (
+          <Row>
+            <Checkbox
+              checked={field.value}
+              onChange={field.onChange}
+              name={field.name}>
+              Ассимитричная
+            </Checkbox>
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="groupForGenerating"
+        control={control}
+        render={({field}) => (
+          <Row>
+            <Select
+              style={{width: '100%'}}
+              size="large"
+              placeholder="Группировка асан для генератора"
+              value={field.value}
+              options={groupsForGenerator}
+              onChange={field.onChange}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
         name="pirs"
         control={control}
-        render={({field, fieldState}) => {
-          return (
-            <Row>
-              <Select
-                mode="multiple"
-                optionFilterProp="label"
-                style={{width: '100%'}}
-                size="large"
-                placeholder="Выберите ПИРы для асаны"
-                status={fieldState.error && 'error'}
-                value={field.value}
-                options={asanaPirOptions}
-                onChange={field.onChange}
-              />
-            </Row>
-          )
-        }}
+        render={({field, fieldState}) => (
+          <Row>
+            <Select
+              mode="multiple"
+              optionFilterProp="label"
+              style={{width: '100%'}}
+              size="large"
+              placeholder="Выберите ПИРы для асаны"
+              status={fieldState.error && 'error'}
+              value={field.value}
+              options={asanaOptions}
+              onChange={field.onChange}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="continuingAsanas"
+        control={control}
+        render={({field, fieldState}) => (
+          <Row>
+            <Select
+              mode="multiple"
+              optionFilterProp="label"
+              style={{width: '100%'}}
+              size="large"
+              placeholder="Выберите асаны для продолжения последовательности"
+              status={fieldState.error && 'error'}
+              value={field.value}
+              options={asanaOptions}
+              onChange={field.onChange}
+            />
+          </Row>
+        )}
       />
 
       <div className={styles.buttonsWrapper}>

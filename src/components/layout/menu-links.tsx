@@ -6,5 +6,13 @@ export const MENU_LINKS = [
   {
     label: <Link href={Urls.ASANA_GROUP_LIST}>Список групп</Link>,
     key: 'groupList'
+  },
+  {
+    label: (
+      <Link href={Urls.ASANA_GROUP_CATEGORY_LIST}>
+        Список категорий для групп
+      </Link>
+    ),
+    key: 'groupCategoryList'
   }
 ]

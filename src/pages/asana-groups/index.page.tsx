@@ -70,9 +70,10 @@ const AsanaListPage: React.FC = () => {
 
   const defaultValues = useMemo<CreateAsanaGroupFormFields>(
     () => ({
-      name: currentGroup?.name ?? ''
+      name: currentGroup?.name ?? '',
+      categoryId: currentGroup?.categoryId ?? 0
     }),
-    [currentGroup?.name]
+    [currentGroup?.categoryId, currentGroup?.name]
   )
 
   const showDeleteConfirm = useCallback(() => {

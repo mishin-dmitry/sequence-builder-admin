@@ -1,14 +1,16 @@
-import React, {useCallback, useEffect} from 'react'
+import React, {useCallback, useEffect, useMemo} from 'react'
 
-import {Button} from 'antd'
+import {Button, Select} from 'antd'
 import {Input} from 'components/input'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
 import {Row} from 'components/row'
 
 import styles from './styles.module.css'
+import {useData} from 'context/asanas'
 
 export interface CreateAsanaGroupFormFields {
   name: string
+  categoryId: number
 }
 
 interface CreateAsanaGroupFormProps {
@@ -22,6 +24,8 @@ export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
   defaultValues,
   onDelete
 }) => {
+  const {asanaGroupCategories} = useData()
+
   const {
     handleSubmit,
     control,
@@ -42,6 +46,11 @@ export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
   useEffect(() => {
     reset(defaultValues)
   }, [defaultValues, reset])
+
+  const asanaGroupCategoriesOptions = useMemo(
+    () => asanaGroupCategories.map(({id, name}) => ({value: id, label: name})),
+    [asanaGroupCategories]
+  )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
@@ -64,6 +73,30 @@ export const CreateAsanaGroupForm: React.FC<CreateAsanaGroupFormProps> = ({
               status={fieldState.error && 'error'}
               label="Название группы"
               name={field.name}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="categoryId"
+        control={control}
+        rules={{
+          required: {
+            value: true,
+            message: 'Выберите категорию'
+          }
+        }}
+        render={({field, fieldState}) => (
+          <Row>
+            <Select
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Выберите категорию"
+              size="large"
+              options={asanaGroupCategoriesOptions}
+              status={fieldState.error && 'error'}
+              style={{width: '100%'}}
             />
           </Row>
         )}

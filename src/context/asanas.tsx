@@ -7,27 +7,31 @@ import React, {
   useState
 } from 'react'
 
-import type {Asana, AsanaGroup} from 'types'
+import type {Asana, AsanaGroup, AsanaGroupCategory} from 'types'
 
 import {getAsanasList} from 'api/asana-actions'
 import {getAsanaGroupsList} from 'api/group-actions'
+import {getAsanaGroupCategoriesList} from 'api/group-category-actions'
 
 export interface Data {
   asanas: Asana[]
   asanaGroups: AsanaGroup[]
+  asanaGroupCategories: AsanaGroupCategory[]
   isFetching: boolean
   asanasMap: Record<number, Asana>
   getInstanceById: (
-    key: 'asanas' | 'groups',
+    key: 'asanas' | 'groups' | 'categories',
     id: number
-  ) => Asana | AsanaGroup | undefined
+  ) => Asana | AsanaGroup | AsanaGroupCategory | undefined
   fetchAsanas?: () => Promise<void>
   fetchAsanaGroups?: () => Promise<void>
+  fetchAsanaGroupCategories?: () => Promise<void>
 }
 
 const initialContext: Data = {
   asanas: [],
   asanaGroups: [],
+  asanaGroupCategories: [],
   asanasMap: {},
   isFetching: false,
   getInstanceById: () => undefined
@@ -41,6 +45,10 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
   const [asanas, setAsanas] = useState<Asana[]>([])
   const [asanaGroups, setAsanaGroups] = useState<AsanaGroup[]>([])
   const [isFetching, setIsFetching] = useState(false)
+
+  const [asanaGroupCategories, setAsanaGroupCategories] = useState<
+    AsanaGroupCategory[]
+  >([])
 
   const asanasMap = useMemo(() => {
     const result = {} as Record<string, Asana>
@@ -58,9 +66,13 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
 
       const asanas = await getAsanasList()
       const asanaGroups = await getAsanaGroupsList()
+      const asanaGroupCategories = await getAsanaGroupCategoriesList()
+
+      console.log('asanaGroupCategories', asanaGroupCategories)
 
       setAsanas(asanas)
       setAsanaGroups(asanaGroups)
+      setAsanaGroupCategories(asanaGroupCategories)
     } catch (error) {
       console.error(error)
     } finally {
@@ -96,17 +108,34 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
     }
   }, [])
 
+  const fetchAsanaGroupCategories = useCallback(async () => {
+    try {
+      setIsFetching(true)
+
+      const asanaGroupsCategories = await getAsanaGroupCategoriesList()
+
+      setAsanaGroupCategories(asanaGroupsCategories)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsFetching(false)
+    }
+  }, [])
+
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getInstanceById = useCallback(
-    (key: 'asanas' | 'groups', id: number) =>
-      (key === 'asanas' ? asanas : asanaGroups).find(
-        (instance) => instance.id === id
-      ),
-    [asanaGroups, asanas]
+    (key: 'asanas' | 'groups' | 'categories', id: number) =>
+      (key === 'asanas'
+        ? asanas
+        : key === 'groups'
+        ? asanaGroups
+        : asanaGroupCategories
+      ).find((instance) => instance.id === id),
+    [asanaGroupCategories, asanaGroups, asanas]
   )
 
   const asanasData = useMemo(
@@ -115,17 +144,21 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
       asanas,
       getInstanceById,
       asanaGroups,
+      asanaGroupCategories,
       fetchAsanas,
       fetchAsanaGroups,
+      fetchAsanaGroupCategories,
       asanasMap
     }),
     [
       isFetching,
       asanas,
       getInstanceById,
+      asanaGroupCategories,
       asanaGroups,
       fetchAsanas,
       fetchAsanaGroups,
+      fetchAsanaGroupCategories,
       asanasMap
     ]
   )

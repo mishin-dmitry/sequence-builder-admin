@@ -3,13 +3,13 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  padding: 20px;
+  height: calc(100vh - 64px);
 }
 
 .mainInner {
   margin: 0 auto;
   max-width: 1280px;
-  padding: 20px;
   display: flex;
   flex-direction: column;
+  height: inherit;
 }
