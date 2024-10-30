@@ -1,17 +1,14 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
 
 import {useData} from 'context/asanas'
-// import {Spinner} from 'components/spinner'
 import {Button, Modal, Table, Input} from 'antd'
-
 import {useAsanaActions} from './hooks'
-
+import {iconsMap} from 'icons'
 import {CreateAsanaForm, type CreateAsanaFormFields} from './create-asana-form'
 
 import type {Asana} from 'types'
 
 import styles from './styles.module.css'
-import {iconsMap} from 'icons'
 
 const AsanasListPage: React.FC = () => {
   const [currentAsanaId, setCurrentAsanaId] = useState(-1)
@@ -95,6 +92,7 @@ const AsanasListPage: React.FC = () => {
   const onCreateFormSubmit = useCallback(
     async (formData: CreateAsanaFormFields) => {
       await createAsana(formData)
+
       setShouldShowEmptyForm(false)
     },
     [createAsana]
@@ -113,7 +111,17 @@ const AsanasListPage: React.FC = () => {
       canBeStartOfSequence: !!currentAsana?.canBeStartOfSequence,
       canBeGenerated: !!currentAsana?.canBeGenerated,
       isAsymmetrical: !!currentAsana?.isAsymmetrical,
-      groupForGenerating: currentAsana?.groupForGenerating || undefined
+      groupForGenerating: currentAsana?.groupForGenerating || undefined,
+      image: currentAsana?.image
+        ? [
+            {
+              uid: '-1',
+              status: 'done',
+              url: currentAsana.image,
+              name: currentAsana.image.split('/').pop() as string
+            }
+          ]
+        : []
     }),
     [currentAsana]
   )

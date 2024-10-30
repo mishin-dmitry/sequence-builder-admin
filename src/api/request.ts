@@ -9,15 +9,12 @@ export enum HttpMethod {
 export const request = async <T = void>(
   httpMethod: HttpMethod,
   endpoint: string,
-  params: Record<string, any>
+  params: FormData
 ): Promise<T> => {
   try {
     const response = await fetch(`${process.env.API_ORIGIN}${endpoint}/`, {
       method: httpMethod,
-      body: JSON.stringify(params),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      body: params
     })
 
     return response.json()

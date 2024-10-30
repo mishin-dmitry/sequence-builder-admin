@@ -1,10 +1,12 @@
 import type {Asana} from 'types'
 import {HttpMethod, request} from './request'
+import {UploadFile} from 'antd'
 
 export interface CreateAsanaRequest {
-  name?: string
+  name: string
+  alias: string
   description?: string
-  alias?: string
+  image: UploadFile[]
   groups?: number[]
 }
 

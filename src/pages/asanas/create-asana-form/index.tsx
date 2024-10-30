@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from 'react'
 
-import {Button, Select, Checkbox, TreeSelect} from 'antd'
+import {Button, Select, Checkbox, TreeSelect, UploadFile} from 'antd'
 import {Input} from 'components/input'
 import {Textarea} from 'components/textarea'
 import {Controller, SubmitHandler, useForm} from 'react-hook-form'
@@ -11,12 +11,14 @@ import {groupsForGenerator} from './group-for-generator'
 import {iconsMap} from 'icons'
 
 import styles from './styles.module.css'
+import {UploadInput} from 'components/upload-input'
 
 export interface CreateAsanaFormFields {
   name: string
   description: string
   alignment: string
   alias: string
+  image: UploadFile[]
   searchKeys: string
   canBeGenerated: boolean
   canBeStartOfSequence: boolean
@@ -141,6 +143,21 @@ export const CreateAsanaForm: React.FC<CreateAsanaFormProps> = ({
               size="large"
               status={fieldState.error && 'error'}
               label="Алиас асаны"
+              name={field.name}
+            />
+          </Row>
+        )}
+      />
+
+      <Controller
+        name="image"
+        control={control}
+        render={({field}) => (
+          <Row>
+            <UploadInput
+              value={field.value}
+              onChange={field.onChange}
+              label="Изображение асаны"
               name={field.name}
             />
           </Row>

@@ -17,13 +17,36 @@ interface UseAsanaActions {
   deleteAsana: (id: number) => Promise<void>
 }
 
+const createFormData = ({
+  image = [],
+  name = '',
+  description = '',
+  alias = '',
+  groups = []
+}: CreateAsanaRequest): FormData => {
+  const formData = new FormData()
+
+  formData.append('name', name)
+  formData.append('alias', alias)
+  formData.append('description', description)
+  formData.append('groups', JSON.stringify(groups))
+
+  if (image[0]?.originFileObj) {
+    formData.append('image', image[0].originFileObj)
+  }
+
+  return formData
+}
+
 export const useAsanaActions = (): UseAsanaActions => {
   const {fetchAsanas} = useData()
 
   const createAsana = useCallback(
-    async (formData: CreateAsanaRequest) => {
+    async (values: CreateAsanaRequest) => {
+      const formData = createFormData(values)
+
       try {
-        await createAsanaAction(formData)
+        await createAsanaAction(formData as unknown as CreateAsanaRequest)
 
         notification['success']({
           message: 'Асана успешно создана'
@@ -41,9 +64,14 @@ export const useAsanaActions = (): UseAsanaActions => {
   )
 
   const updateAsana = useCallback(
-    async (formData: CreateAsanaRequest, id: number) => {
+    async (values: CreateAsanaRequest, id: number) => {
+      const formData = createFormData(values)
+
       try {
-        await updateAsanaAction(`${API_PREFIX}/${id}`, formData)
+        await updateAsanaAction(
+          `${API_PREFIX}/${id}`,
+          formData as unknown as CreateAsanaRequest
+        )
 
         notification['success']({
           message: 'Асана успешно отредактирована'

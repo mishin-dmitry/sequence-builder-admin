@@ -16,6 +16,7 @@ export interface Asana {
   name: string
   description: string
   alignment: string
+  image: string
   alias: string
   searchKeys: string
   canBeGenerated: boolean

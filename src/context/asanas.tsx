@@ -68,8 +68,6 @@ export const ProvideData: React.FC<{children: React.ReactNode}> = ({
       const asanaGroups = await getAsanaGroupsList()
       const asanaGroupCategories = await getAsanaGroupCategoriesList()
 
-      console.log('asanaGroupCategories', asanaGroupCategories)
-
       setAsanas(asanas)
       setAsanaGroups(asanaGroups)
       setAsanaGroupCategories(asanaGroupCategories)
