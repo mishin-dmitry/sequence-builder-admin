@@ -2,12 +2,11 @@ import type {Asana} from 'types'
 import {HttpMethod, request} from './request'
 import {UploadFile} from 'antd'
 
-export interface CreateAsanaRequest {
-  name: string
-  alias: string
-  description?: string
+export interface CreateAsanaRequest
+  extends Omit<Asana, 'image' | 'groups' | 'continuingAsanas'> {
   image: UploadFile[]
-  groups?: number[]
+  groups: number[]
+  continuingAsanas?: number[]
 }
 
 export const API_PREFIX = 'api/asanas'

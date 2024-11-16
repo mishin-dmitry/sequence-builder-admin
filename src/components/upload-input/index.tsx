@@ -20,8 +20,6 @@ export const UploadInput: React.FC<UploadInputProps> = ({
   label,
   onChange
 }) => {
-  console.log('value', value)
-
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 

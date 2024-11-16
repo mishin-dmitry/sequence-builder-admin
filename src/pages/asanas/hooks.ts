@@ -22,14 +22,26 @@ const createFormData = ({
   name = '',
   description = '',
   alias = '',
-  groups = []
+  groups = [],
+  continuingAsanas = [],
+  searchKeys,
+  alignment,
+  canBeStartOfSequence,
+  canBeGenerated,
+  isAsymmetrical
 }: CreateAsanaRequest): FormData => {
   const formData = new FormData()
 
   formData.append('name', name)
   formData.append('alias', alias)
+  formData.append('searchKeys', searchKeys)
   formData.append('description', description)
+  formData.append('alignment', alignment)
+  formData.append('canBeStartOfSequence', `${canBeStartOfSequence}`)
+  formData.append('canBeGenerated', `${canBeGenerated}`)
+  formData.append('isAsymmetrical', `${isAsymmetrical}`)
   formData.append('groups', JSON.stringify(groups))
+  formData.append('continuingAsanas', JSON.stringify(continuingAsanas))
 
   if (image[0]?.originFileObj) {
     formData.append('image', image[0].originFileObj)
@@ -99,7 +111,6 @@ export const useAsanaActions = (): UseAsanaActions => {
 
         await fetchAsanas?.()
       } catch (error) {
-        console.log(error)
         notification['error']({
           message: 'Ошибка',
           description: 'При удалении асаны возникла ошибка'
